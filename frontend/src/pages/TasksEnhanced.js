@@ -77,8 +77,19 @@ const TasksEnhanced = () => {
   const handleSubmit = async (taskData) => {
     setIsSubmitting(true);
     try {
-      console.log('Submitting task data:', taskData);
-      const response = await axios.post(`${API}/tasks`, taskData);
+      console.log('Submitting task data:', {
+        ...taskData,
+        initial_attachments: taskData.initial_attachments?.map(att => ({
+          ...att,
+          file_url: att.file_url ? `${att.file_url.substring(0, 50)}... (${att.file_url.length} chars)` : 'No URL'
+        }))
+      });
+      
+      // Create task with extended timeout for file uploads
+      const response = await axios.post(`${API}/tasks`, taskData, {
+        timeout: 30000 // 30 second timeout for file uploads
+      });
+      
       console.log('Task created successfully:', response.data);
       
       setLastCreatedTask(response.data);
@@ -87,13 +98,27 @@ const TasksEnhanced = () => {
       
       // Show success message
       setTimeout(() => {
-        alert(`✅ SUCCESS! Task "${taskData.title}" has been created and saved!`);
+        alert(`✅ SUCCESS! Task "${taskData.title}" has been created and saved!${taskData.initial_attachments?.length ? ` (${taskData.initial_attachments.length} files attached)` : ''}`);
       }, 500);
       
     } catch (error) {
       console.error('Error creating task:', error);
       console.error('Error details:', error.response?.data);
-      alert('❌ Error creating task: ' + (error.response?.data?.detail || error.message));
+      
+      let errorMessage = 'Unknown error occurred';
+      if (error.code === 'ECONNABORTED') {
+        errorMessage = 'Request timeout. Files might be too large.';
+      } else if (error.response?.status === 413) {
+        errorMessage = 'Request too large. Please use smaller images or fewer attachments.';
+      } else if (error.response?.status === 422) {
+        errorMessage = 'Invalid data format. Check your attachments.';
+      } else if (error.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      alert('❌ Error creating task: ' + errorMessage);
     } finally {
       setIsSubmitting(false);
     }
