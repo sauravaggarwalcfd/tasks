@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const TaskCreateForm = ({ workers, onSubmit, onCancel, currentUser }) => {
+const TaskCreateForm = ({ workers, onSubmit, onCancel, currentUser, isSubmitting = false }) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
