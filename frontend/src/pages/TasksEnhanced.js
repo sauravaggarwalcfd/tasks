@@ -72,29 +72,14 @@ const TasksEnhanced = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (taskData) => {
     try {
-      const taskData = {
-        ...formData,
-        estimated_hours: formData.estimated_hours ? parseFloat(formData.estimated_hours) : null,
-        created_by: currentUser.id
-      };
       await axios.post(`${API}/tasks`, taskData);
       setShowForm(false);
-      setFormData({
-        title: '',
-        description: '',
-        assigned_to: '',
-        department: 'cutting',
-        priority: 'medium',
-        due_date: '',
-        tags: [],
-        estimated_hours: ''
-      });
       fetchTasks();
     } catch (error) {
       console.error('Error creating task:', error);
+      alert('Error creating task. Please try again.');
     }
   };
 
