@@ -114,10 +114,11 @@ const TaskCreateForm = ({ workers, onSubmit, onCancel, currentUser }) => {
     return 'document';
   };
 
-  const formatFileSize = (bytes) => {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  const handleFilesUploaded = (newFiles) => {
+    setFormData(prev => ({
+      ...prev,
+      initial_attachments: [...prev.initial_attachments, ...newFiles]
+    }));
   };
 
   const handleRemoveAttachment = (index) => {
