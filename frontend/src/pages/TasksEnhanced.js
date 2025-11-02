@@ -316,6 +316,25 @@ const TasksEnhanced = () => {
         </button>
       </div>
 
+      {/* Success Banner */}
+      {lastCreatedTask && (
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">✅</span>
+            <div>
+              <p className="font-medium text-green-800">Task Created Successfully!</p>
+              <p className="text-sm text-green-600">"{lastCreatedTask.title}" has been saved and is now visible in the task list.</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setLastCreatedTask(null)}
+            className="text-green-600 hover:text-green-800"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       {/* Filter by Status */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">Filter by Status:</label>
