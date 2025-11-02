@@ -143,6 +143,22 @@ const TaskCreateForm = ({ workers, onSubmit, onCancel, currentUser }) => {
     });
   };
 
+  const handleAddAttachment = () => {
+    if (attachmentForm.file_name.trim() && attachmentForm.file_url.trim()) {
+      const newAttachment = {
+        file_name: attachmentForm.file_name,
+        file_url: attachmentForm.file_url,
+        file_type: attachmentForm.file_type,
+        uploaded_by: currentUser.name
+      };
+      setFormData({ 
+        ...formData, 
+        initial_attachments: [...formData.initial_attachments, newAttachment] 
+      });
+      setAttachmentForm({ file_name: '', file_url: '', file_type: 'document' });
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const submitData = {
