@@ -30,21 +30,21 @@ const DashboardApple = () => {
 
   return (
     <div className="bg-[#f5f5f7] min-h-screen" style={{fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif'}}>
-      {/* Apple-style premium header */}
+      {/* Apple-style compact header */}
       <div className="bg-white/80 backdrop-blur-xl border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-12 py-6">
+        <div className="max-w-7xl mx-auto px-8 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-semibold tracking-tight text-gray-900">Dashboard</h1>
-            <button className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-sm font-medium transition-all shadow-sm">
+            <h1 className="text-2xl font-semibold tracking-tight text-gray-900">Dashboard</h1>
+            <button className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full text-sm font-medium transition-all shadow-sm">
               Create Order
             </button>
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-12 py-12">
-        {/* Apple-style premium cards */}
-        <div className="grid grid-cols-4 gap-6 mb-12">
+      <div className="max-w-7xl mx-auto px-8 py-6">
+        {/* Apple-style compact cards */}
+        <div className="grid grid-cols-4 gap-4 mb-6">
           <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-all">
             <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
               <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
