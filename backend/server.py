@@ -208,6 +208,15 @@ class TaskCreate(BaseModel):
     department: str
     priority: TaskPriority = TaskPriority.MEDIUM
     due_date: Optional[str] = None
+    tags: List[str] = []
+    estimated_hours: Optional[float] = None
+    frequency: str = "once"  # once, daily, weekly, monthly, specific_dates
+    recurrence_pattern: Optional[str] = None  # For weekly: "mon,wed,fri", for monthly: "15"
+    start_date: Optional[str] = None
+    specific_dates: List[str] = []
+    reminder_enabled: bool = False
+    reminder_before_hours: Optional[int] = None
+    initial_attachments: List[dict] = []  # For files attached during creation
 
 class Task(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -222,6 +231,12 @@ class Task(BaseModel):
     due_date: Optional[str] = None
     tags: List[str] = []
     estimated_hours: Optional[float] = None
+    frequency: str = "once"
+    recurrence_pattern: Optional[str] = None
+    start_date: Optional[str] = None
+    specific_dates: List[str] = []
+    reminder_enabled: bool = False
+    reminder_before_hours: Optional[int] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     completed_at: Optional[datetime] = None
     created_by: Optional[str] = None
