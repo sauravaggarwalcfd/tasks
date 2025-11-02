@@ -506,40 +506,78 @@ const TaskCreateForm = ({ workers, onSubmit, onCancel, currentUser, isSubmitting
                 )}
               </div>
 
-              {/* Group Notifications */}
+              {/* Group Chat Notifications */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  👥 Group Notifications
+                  💬 Group Chat Notifications
                 </label>
-                <p className="text-xs text-gray-500 mb-2">
-                  Select department groups to notify (useful for team coordination)
+                <p className="text-xs text-gray-500 mb-3">
+                  Select group chats to notify - task notification will appear as a message in selected groups
                 </p>
-                <div className="space-y-2">
-                  {departments.map(dept => (
-                    <label key={dept} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-                      <input
-                        type="checkbox"
-                        checked={formData.notify_groups.includes(dept)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setFormData({ ...formData, notify_groups: [...formData.notify_groups, dept] });
-                          } else {
-                            setFormData({ ...formData, notify_groups: formData.notify_groups.filter(g => g !== dept) });
-                          }
-                        }}
-                        className="w-4 h-4"
-                      />
-                      <span className="text-sm font-medium text-gray-700 capitalize">{dept} Department</span>
-                      <span className="text-xs text-gray-500">
-                        (All {dept} workers will be notified)
-                      </span>
-                    </label>
-                  ))}
-                </div>
+                
+                {groupChats.length > 0 ? (
+                  <div className="space-y-2 max-h-48 overflow-y-auto border border-gray-200 rounded-lg p-3">
+                    {groupChats.map(group => (
+                      <label key={group.id} className="flex items-center gap-3 cursor-pointer hover:bg-gray-50 px-3 py-3 rounded-lg border border-gray-100">
+                        <input
+                          type="checkbox"
+                          checked={formData.notify_groups.includes(group.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setFormData({ ...formData, notify_groups: [...formData.notify_groups, group.id] });
+                            } else {
+                              setFormData({ ...formData, notify_groups: formData.notify_groups.filter(g => g !== group.id) });
+                            }
+                          }}
+                          className="w-4 h-4"
+                        />
+                        <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center text-lg">
+                          👥
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-gray-800">{group.name}</p>
+                          <p className="text-xs text-gray-500">
+                            {group.members.length} member(s)
+                            {group.department && ` • ${group.department} dept`}
+                          </p>
+                          {group.description && (
+                            <p className="text-xs text-gray-400 mt-0.5">{group.description}</p>
+                          )}
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                    <div className="text-2xl mb-2">👥</div>
+                    <p className="text-sm text-gray-600 mb-2">No group chats created yet</p>
+                    <p className="text-xs text-gray-500">Go to Groups page to create group chats first</p>
+                    <button
+                      type="button"
+                      onClick={() => window.open('/groups', '_blank')}
+                      className="mt-2 px-3 py-1 bg-purple-600 text-white rounded text-xs hover:bg-purple-700"
+                    >
+                      Create Group Chat
+                    </button>
+                  </div>
+                )}
+                
                 {formData.notify_groups.length > 0 && (
-                  <p className="text-xs text-green-600 mt-2">
-                    ✓ {formData.notify_groups.length} department group(s) will be notified
-                  </p>
+                  <div className="mt-3 p-2 bg-green-50 rounded-lg">
+                    <p className="text-xs text-green-700 font-medium">
+                      ✓ {formData.notify_groups.length} group chat(s) will receive task notifications as messages
+                    </p>
+                    <div className="flex gap-1 flex-wrap mt-1">
+                      {formData.notify_groups.map(groupId => {
+                        const group = groupChats.find(g => g.id === groupId);
+                        return group ? (
+                          <span key={groupId} className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full text-xs">
+                            💬 {group.name}
+                          </span>
+                        ) : null;
+                      })}
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
