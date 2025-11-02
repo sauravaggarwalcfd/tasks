@@ -19,7 +19,13 @@ const TasksEnhanced = () => {
     priority: 'medium',
     due_date: '',
     tags: [],
-    estimated_hours: ''
+    estimated_hours: '',
+    frequency: 'once',
+    recurrence_pattern: '',
+    start_date: '',
+    specific_dates: [],
+    reminder_enabled: false,
+    reminder_before_hours: 24
   });
 
   // Task detail modal states
