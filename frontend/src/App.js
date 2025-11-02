@@ -110,7 +110,8 @@ function App() {
             <Route path="/suppliers" element={<Suppliers />} />
             <Route path="/quality" element={<Quality />} />
             <Route path="/employees" element={<Employees />} />
-            <Route path="/tasks" element={<Tasks />} />
+            <Route path="/tasks" element={<TasksEnhanced />} />
+            <Route path="/tasks-old" element={<Tasks />} />
             <Route path="/analytics" element={<Analytics />} />
           </Routes>
         </Layout>
