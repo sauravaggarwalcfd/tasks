@@ -354,6 +354,7 @@ const TasksEnhanced = () => {
           onSubmit={handleSubmit}
           onCancel={() => setShowForm(false)}
           currentUser={currentUser}
+          isSubmitting={isSubmitting}
         />
       )}
 
