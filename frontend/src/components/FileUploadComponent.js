@@ -32,7 +32,7 @@ const FileUploadComponent = ({ onFilesUploaded, currentUser, existingAttachments
     files.forEach((file) => {
       // Validate file size (max 10MB)
       if (file.size > 10 * 1024 * 1024) {
-        alert(`File \"${file.name}\" is too large. Maximum size is 10MB.`);
+        alert(`File "${file.name}" is too large. Maximum size is 10MB.`);
         return;
       }
 
