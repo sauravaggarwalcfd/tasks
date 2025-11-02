@@ -98,6 +98,10 @@ function App() {
             <Route path="/modern" element={<DashboardModern />} />
             <Route path="/minimal" element={<DashboardMinimal />} />
             <Route path="/dark" element={<DashboardDark />} />
+            <Route path="/notion" element={<DashboardNotion />} />
+            <Route path="/linear" element={<DashboardLinear />} />
+            <Route path="/stripe" element={<DashboardStripe />} />
+            <Route path="/apple" element={<DashboardApple />} />
             <Route path="/orders" element={<Orders />} />
             <Route path="/production" element={<Production />} />
             <Route path="/inventory" element={<Inventory />} />
