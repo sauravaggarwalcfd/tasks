@@ -614,6 +614,159 @@ async def delete_task(task_id: str):
     return {"message": "Task deleted successfully"}
 
 
+# ==================== TASK COMMENTS ROUTES ====================
+@api_router.post("/tasks/{task_id}/comments", response_model=TaskComment)
+async def create_task_comment(task_id: str, comment_input: TaskCommentCreate):
+    # Verify task exists
+    task = await db.tasks.find_one({"id": task_id})
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    comment = TaskComment(**comment_input.model_dump())
+    doc = comment.model_dump()
+    doc = serialize_doc(doc)
+    await db.task_comments.insert_one(doc)
+    
+    # Log activity
+    await log_activity(task_id, comment_input.user_id, comment_input.user_name, "commented", f"Added a comment")
+    
+    return comment
+
+@api_router.get("/tasks/{task_id}/comments", response_model=List[TaskComment])
+async def get_task_comments(task_id: str):
+    comments = await db.task_comments.find({"task_id": task_id}, {"_id": 0}).sort("created_at", 1).to_list(1000)
+    comments = [deserialize_doc(comment) for comment in comments]
+    return comments
+
+@api_router.delete("/tasks/{task_id}/comments/{comment_id}")
+async def delete_task_comment(task_id: str, comment_id: str):
+    result = await db.task_comments.delete_one({"id": comment_id, "task_id": task_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Comment not found")
+    return {"message": "Comment deleted successfully"}
+
+
+# ==================== SUBTASKS ROUTES ====================
+@api_router.post("/tasks/{task_id}/subtasks", response_model=Subtask)
+async def create_subtask(task_id: str, subtask_input: SubtaskCreate):
+    # Verify task exists
+    task = await db.tasks.find_one({"id": task_id})
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    subtask = Subtask(**subtask_input.model_dump())
+    doc = subtask.model_dump()
+    doc = serialize_doc(doc)
+    await db.subtasks.insert_one(doc)
+    
+    return subtask
+
+@api_router.get("/tasks/{task_id}/subtasks", response_model=List[Subtask])
+async def get_subtasks(task_id: str):
+    subtasks = await db.subtasks.find({"task_id": task_id}, {"_id": 0}).sort("created_at", 1).to_list(1000)
+    subtasks = [deserialize_doc(subtask) for subtask in subtasks]
+    return subtasks
+
+@api_router.put("/tasks/{task_id}/subtasks/{subtask_id}")
+async def update_subtask(task_id: str, subtask_id: str, completed: bool):
+    update_data = {
+        "completed": completed,
+        "completed_at": datetime.now(timezone.utc).isoformat() if completed else None
+    }
+    
+    result = await db.subtasks.update_one({"id": subtask_id, "task_id": task_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Subtask not found")
+    return {"message": "Subtask updated successfully"}
+
+@api_router.delete("/tasks/{task_id}/subtasks/{subtask_id}")
+async def delete_subtask(task_id: str, subtask_id: str):
+    result = await db.subtasks.delete_one({"id": subtask_id, "task_id": task_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Subtask not found")
+    return {"message": "Subtask deleted successfully"}
+
+
+# ==================== TASK ATTACHMENTS ROUTES ====================
+@api_router.post("/tasks/{task_id}/attachments", response_model=TaskAttachment)
+async def create_attachment(task_id: str, attachment_input: TaskAttachmentCreate):
+    # Verify task exists
+    task = await db.tasks.find_one({"id": task_id})
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    attachment = TaskAttachment(**attachment_input.model_dump())
+    doc = attachment.model_dump()
+    doc = serialize_doc(doc)
+    await db.task_attachments.insert_one(doc)
+    
+    # Log activity
+    await log_activity(task_id, attachment_input.uploaded_by, attachment_input.uploaded_by, "attached_file", f"Attached file: {attachment_input.file_name}")
+    
+    return attachment
+
+@api_router.get("/tasks/{task_id}/attachments", response_model=List[TaskAttachment])
+async def get_attachments(task_id: str):
+    attachments = await db.task_attachments.find({"task_id": task_id}, {"_id": 0}).sort("uploaded_at", -1).to_list(1000)
+    attachments = [deserialize_doc(attachment) for attachment in attachments]
+    return attachments
+
+@api_router.delete("/tasks/{task_id}/attachments/{attachment_id}")
+async def delete_attachment(task_id: str, attachment_id: str):
+    result = await db.task_attachments.delete_one({"id": attachment_id, "task_id": task_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Attachment not found")
+    return {"message": "Attachment deleted successfully"}
+
+
+# ==================== TIME LOGS ROUTES ====================
+@api_router.post("/tasks/{task_id}/time-logs", response_model=TimeLog)
+async def create_time_log(task_id: str, timelog_input: TimeLogCreate):
+    # Verify task exists
+    task = await db.tasks.find_one({"id": task_id})
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    timelog = TimeLog(**timelog_input.model_dump())
+    doc = timelog.model_dump()
+    doc = serialize_doc(doc)
+    await db.time_logs.insert_one(doc)
+    
+    # Log activity
+    await log_activity(task_id, timelog_input.user_id, timelog_input.user_name, "logged_time", f"Logged {timelog_input.hours} hours")
+    
+    return timelog
+
+@api_router.get("/tasks/{task_id}/time-logs", response_model=List[TimeLog])
+async def get_time_logs(task_id: str):
+    timelogs = await db.time_logs.find({"task_id": task_id}, {"_id": 0}).sort("logged_at", -1).to_list(1000)
+    timelogs = [deserialize_doc(timelog) for timelog in timelogs]
+    return timelogs
+
+@api_router.get("/tasks/{task_id}/total-hours")
+async def get_total_hours(task_id: str):
+    timelogs = await db.time_logs.find({"task_id": task_id}, {"_id": 0}).to_list(1000)
+    total_hours = sum(log.get('hours', 0) for log in timelogs)
+    return {"total_hours": total_hours}
+
+
+# ==================== ACTIVITY LOG ROUTES ====================
+@api_router.get("/tasks/{task_id}/activities", response_model=List[ActivityLog])
+async def get_task_activities(task_id: str):
+    activities = await db.activity_logs.find({"task_id": task_id}, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    activities = [deserialize_doc(activity) for activity in activities]
+    return activities
+
+
+# ==================== TASK TAGS ROUTES ====================
+@api_router.put("/tasks/{task_id}/tags")
+async def update_task_tags(task_id: str, tags: List[str]):
+    result = await db.tasks.update_one({"id": task_id}, {"$set": {"tags": tags}})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return {"message": "Tags updated successfully"}
+
+
 # ==================== ANALYTICS ROUTES ====================
 @api_router.get("/analytics/dashboard")
 async def get_dashboard_analytics():
