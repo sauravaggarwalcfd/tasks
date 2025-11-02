@@ -461,6 +461,34 @@ const TasksEnhanced = () => {
                     {totalHours.toFixed(1)}h / {selectedTask.estimated_hours || '—'}h
                   </p>
                 </div>
+                <div>
+                  <span className="text-gray-500">Frequency:</span>
+                  <p className="font-medium">{getFrequencyIcon(selectedTask.frequency)} {getFrequencyLabel(selectedTask)}</p>
+                </div>
+                {selectedTask.reminder_enabled && (
+                  <div>
+                    <span className="text-gray-500">Reminder:</span>
+                    <p className="font-medium">🔔 {selectedTask.reminder_before_hours}h before</p>
+                  </div>
+                )}
+                {selectedTask.start_date && (
+                  <div>
+                    <span className="text-gray-500">Start Date:</span>
+                    <p className="font-medium">{selectedTask.start_date}</p>
+                  </div>
+                )}
+                {selectedTask.specific_dates && selectedTask.specific_dates.length > 0 && (
+                  <div className="col-span-2">
+                    <span className="text-gray-500">Scheduled Dates:</span>
+                    <div className="flex gap-1 flex-wrap mt-1">
+                      {selectedTask.specific_dates.map((date, idx) => (
+                        <span key={idx} className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs">
+                          {date}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Tags */}
