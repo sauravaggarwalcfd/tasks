@@ -115,6 +115,9 @@ function App() {
             <Route path="/employees" element={<Employees />} />
             <Route path="/tasks" element={<TasksEnhanced />} />
             <Route path="/tasks-old" element={<Tasks />} />
+            <Route path="/messages" element={<Messages />} />
+            <Route path="/groups" element={<Groups />} />
+            <Route path="/notifications" element={<Notifications />} />
             <Route path="/analytics" element={<Analytics />} />
           </Routes>
         </Layout>
