@@ -843,7 +843,7 @@ async def create_task_comment(task_id: str, comment_input: TaskCommentCreate):
     await db.task_comments.insert_one(doc)
     
     # Log activity
-    await log_activity(task_id, comment_input.user_id, comment_input.user_name, "commented", f"Added a comment")
+    await log_activity(task_id, comment_input.user_id, comment_input.user_name, "commented", "Added a comment")
     
     return comment
 
