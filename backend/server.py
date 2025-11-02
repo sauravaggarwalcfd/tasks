@@ -1089,6 +1089,228 @@ async def update_task_tags(task_id: str, tags: List[str]):
     return {"message": "Tags updated successfully"}
 
 
+# ==================== CONVERSATIONS ROUTES (1-on-1 Chat) ====================
+@api_router.get("/conversations", response_model=List[Conversation])
+async def get_user_conversations(user_id: str):
+    conversations = await db.conversations.find({
+        "$or": [{"participant1_id": user_id}, {"participant2_id": user_id}]
+    }, {"_id": 0}).sort("last_message_at", -1).to_list(1000)
+    conversations = [deserialize_doc(conv) for conv in conversations]
+    return conversations
+
+@api_router.post("/conversations", response_model=Conversation)
+async def create_conversation(conv_input: ConversationCreate):
+    # Check if conversation already exists
+    existing = await get_or_create_conversation(
+        conv_input.participant1_id, conv_input.participant1_name,
+        conv_input.participant2_id, conv_input.participant2_name
+    )
+    return existing
+
+@api_router.get("/conversations/{conversation_id}/messages", response_model=List[Message])
+async def get_conversation_messages(conversation_id: str, limit: Optional[int] = 50):
+    messages = await db.messages.find(
+        {"conversation_id": conversation_id}, 
+        {"_id": 0}
+    ).sort("sent_at", -1).limit(limit).to_list(limit or 50)
+    
+    messages = [deserialize_doc(msg) for msg in messages]
+    return list(reversed(messages))  # Return in chronological order
+
+@api_router.post("/conversations/{conversation_id}/messages", response_model=Message)
+async def send_message(conversation_id: str, message_input: MessageCreate):
+    # Verify conversation exists
+    conversation = await db.conversations.find_one({"id": conversation_id})
+    if not conversation:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+    
+    message = Message(**message_input.model_dump())
+    doc = message.model_dump()
+    doc = serialize_doc(doc)
+    await db.messages.insert_one(doc)
+    
+    # Update conversation last message
+    await db.conversations.update_one(
+        {"id": conversation_id},
+        {"$set": {
+            "last_message": message.content[:100],
+            "last_message_at": message.sent_at.isoformat()
+        }}
+    )
+    
+    return message
+
+@api_router.put("/conversations/{conversation_id}/messages/{message_id}/read")
+async def mark_message_read(conversation_id: str, message_id: str):
+    result = await db.messages.update_one(
+        {"id": message_id, "conversation_id": conversation_id},
+        {"$set": {"read_by_recipient": True}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Message not found")
+    return {"message": "Message marked as read"}
+
+
+# ==================== GROUP CHAT ROUTES ====================
+@api_router.get("/groups", response_model=List[GroupChat])
+async def get_user_groups(user_id: Optional[str] = None):
+    query = {}
+    if user_id:
+        query = {"members": {"$elemMatch": {"user_id": user_id}}}
+    
+    groups = await db.group_chats.find(query, {"_id": 0}).sort("last_message_at", -1).to_list(1000)
+    groups = [deserialize_doc(group) for group in groups]
+    return groups
+
+@api_router.post("/groups", response_model=GroupChat)
+async def create_group_chat(group_input: GroupChatCreate):
+    group = GroupChat(**group_input.model_dump())
+    doc = group.model_dump()
+    doc = serialize_doc(doc)
+    await db.group_chats.insert_one(doc)
+    return group
+
+@api_router.get("/groups/{group_id}/messages", response_model=List[GroupMessage])
+async def get_group_messages(group_id: str, limit: Optional[int] = 50):
+    messages = await db.group_messages.find(
+        {"group_id": group_id}, 
+        {"_id": 0}
+    ).sort("sent_at", -1).limit(limit).to_list(limit or 50)
+    
+    messages = [deserialize_doc(msg) for msg in messages]
+    return list(reversed(messages))
+
+@api_router.post("/groups/{group_id}/messages", response_model=GroupMessage)
+async def send_group_message(group_id: str, message_input: GroupMessageCreate):
+    # Verify group exists and user is member
+    group = await db.group_chats.find_one({"id": group_id})
+    if not group:
+        raise HTTPException(status_code=404, detail="Group not found")
+    
+    # Check if sender is group member
+    is_member = any(member['user_id'] == message_input.sender_id for member in group['members'])
+    if not is_member:
+        raise HTTPException(status_code=403, detail="Not a member of this group")
+    
+    message = GroupMessage(**message_input.model_dump())
+    doc = message.model_dump()
+    doc = serialize_doc(doc)
+    await db.group_messages.insert_one(doc)
+    
+    # Update group last message
+    await db.group_chats.update_one(
+        {"id": group_id},
+        {"$set": {
+            "last_message": message.content[:100],
+            "last_message_at": message.sent_at.isoformat()
+        }}
+    )
+    
+    return message
+
+@api_router.put("/groups/{group_id}/messages/{message_id}/read")
+async def mark_group_message_read(group_id: str, message_id: str, user_id: str):
+    # Add user to read_by list if not already there
+    result = await db.group_messages.update_one(
+        {"id": message_id, "group_id": group_id},
+        {"$addToSet": {"read_by": user_id}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Message not found")
+    return {"message": "Message marked as read"}
+
+
+# ==================== TASK NOTIFICATIONS ROUTES ====================
+@api_router.get("/notifications", response_model=List[TaskNotification])
+async def get_user_notifications(user_id: str, unread_only: Optional[bool] = False):
+    query = {"recipient_id": user_id}
+    if unread_only:
+        query["read"] = False
+    
+    notifications = await db.task_notifications.find(
+        query, {"_id": 0}
+    ).sort("created_at", -1).to_list(1000)
+    
+    notifications = [deserialize_doc(notif) for notif in notifications]
+    return notifications
+
+@api_router.put("/notifications/{notification_id}/read")
+async def mark_notification_read(notification_id: str):
+    result = await db.task_notifications.update_one(
+        {"id": notification_id},
+        {"$set": {
+            "read": True,
+            "read_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Notification not found")
+    return {"message": "Notification marked as read"}
+
+@api_router.put("/notifications/{notification_id}/action")
+async def update_notification_action(notification_id: str, action: str):
+    result = await db.task_notifications.update_one(
+        {"id": notification_id},
+        {"$set": {"action_taken": action}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Notification not found")
+    return {"message": "Notification action updated"}
+
+
+# ==================== TASK COMPLETION ROUTES (Interactive) ====================
+@api_router.post("/tasks/{task_id}/complete", response_model=TaskCompletion)
+async def complete_task_interactive(task_id: str, completion_input: TaskCompletionCreate):
+    # Verify task exists
+    task = await db.tasks.find_one({"id": task_id})
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    # Create completion record
+    completion = TaskCompletion(**completion_input.model_dump())
+    doc = completion.model_dump()
+    doc = serialize_doc(doc)
+    await db.task_completions.insert_one(doc)
+    
+    # Update task status
+    await db.tasks.update_one(
+        {"id": task_id},
+        {"$set": {
+            "status": completion_input.completion_status,
+            "completed_at": completion.completed_at.isoformat()
+        }}
+    )
+    
+    # Log activity
+    await log_activity(task_id, completion_input.completed_by, completion_input.completed_by_name, "completed_interactive", f"Completed task with notes: {completion_input.completion_notes[:50]}...")
+    
+    # Send completion notification to relevant parties
+    if task.get('send_notifications', True):
+        task_dict = deserialize_doc(task)
+        completion_dict = completion.model_dump()
+        
+        # Notify task creator
+        if task.get('created_by') and task['created_by'] != completion_input.completed_by:
+            creator = await db.workers.find_one({"id": task['created_by']}, {"_id": 0})
+            if creator:
+                await send_task_notification(
+                    {**task_dict, 'completion_details': completion_dict},
+                    "task_completed",
+                    [{"user_id": task['created_by'], "user_name": creator['name']}]
+                )
+    
+    return completion
+
+@api_router.get("/tasks/{task_id}/completions", response_model=List[TaskCompletion])
+async def get_task_completions(task_id: str):
+    completions = await db.task_completions.find(
+        {"task_id": task_id}, 
+        {"_id": 0}
+    ).sort("completed_at", -1).to_list(1000)
+    completions = [deserialize_doc(comp) for comp in completions]
+    return completions
+
+
 # ==================== ANALYTICS ROUTES ====================
 @api_router.get("/analytics/dashboard")
 async def get_dashboard_analytics():
