@@ -94,7 +94,7 @@ function App() {
       <BrowserRouter>
         <Layout>
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/" element={<DashboardApple />} />
             <Route path="/modern" element={<DashboardModern />} />
             <Route path="/minimal" element={<DashboardMinimal />} />
             <Route path="/dark" element={<DashboardDark />} />
@@ -102,6 +102,7 @@ function App() {
             <Route path="/linear" element={<DashboardLinear />} />
             <Route path="/stripe" element={<DashboardStripe />} />
             <Route path="/apple" element={<DashboardApple />} />
+            <Route path="/original" element={<Dashboard />} />
             <Route path="/orders" element={<Orders />} />
             <Route path="/production" element={<Production />} />
             <Route path="/inventory" element={<Inventory />} />
