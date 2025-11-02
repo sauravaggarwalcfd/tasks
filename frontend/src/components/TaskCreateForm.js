@@ -469,6 +469,12 @@ const TaskCreateForm = ({ workers, onSubmit, onCancel, currentUser, isSubmitting
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Upload Files (Max 2MB for images, 10MB for others)
             </label>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
+              <p className="text-xs text-yellow-800 flex items-center gap-2">
+                <span>⚠️</span>
+                <span><strong>Important:</strong> Large images may cause saving issues. For best results, compress images before uploading or use images under 1MB.</span>
+              </p>
+            </div>
             <input
               type="file"
               multiple
