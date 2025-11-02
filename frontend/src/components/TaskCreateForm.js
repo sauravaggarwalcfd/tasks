@@ -52,22 +52,6 @@ const TaskCreateForm = ({ workers, onSubmit, onCancel, currentUser }) => {
     setFormData({ ...formData, specific_dates: formData.specific_dates.filter(d => d !== dateToRemove) });
   };
 
-  const handleAddAttachment = () => {
-    if (attachmentForm.file_name.trim() && attachmentForm.file_url.trim()) {
-      const newAttachment = {
-        file_name: attachmentForm.file_name,
-        file_url: attachmentForm.file_url,
-        file_type: attachmentForm.file_type,
-        uploaded_by: currentUser.name
-      };
-      setFormData({ 
-        ...formData, 
-        initial_attachments: [...formData.initial_attachments, newAttachment] 
-      });
-      setAttachmentForm({ file_name: '', file_url: '', file_type: 'document' });
-    }
-  };
-
   const handleFileUpload = (event) => {
     const files = Array.from(event.target.files);
     
