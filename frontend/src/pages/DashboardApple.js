@@ -97,38 +97,38 @@ const DashboardApple = () => {
           </div>
         </div>
 
-        {/* Apple-style action cards */}
-        <div className="bg-white rounded-3xl p-8 shadow-sm mb-8">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">Quick Actions</h2>
-          <div className="grid grid-cols-4 gap-4">
-            <button className="group p-6 bg-gradient-to-br from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 rounded-2xl transition-all">
-              <div className="text-3xl mb-3">📦</div>
+        {/* Apple-style compact action cards */}
+        <div className="bg-white rounded-2xl p-5 shadow-sm mb-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+          <div className="grid grid-cols-4 gap-3">
+            <button className="group p-4 bg-gradient-to-br from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 rounded-xl transition-all">
+              <div className="text-2xl mb-2">📦</div>
               <div className="text-sm font-semibold text-gray-900">New Order</div>
-              <div className="text-xs text-gray-600 mt-1">Create order</div>
+              <div className="text-xs text-gray-600 mt-0.5">Create order</div>
             </button>
-            <button className="group p-6 bg-gradient-to-br from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 rounded-2xl transition-all">
-              <div className="text-3xl mb-3">⚙️</div>
+            <button className="group p-4 bg-gradient-to-br from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 rounded-xl transition-all">
+              <div className="text-2xl mb-2">⚙️</div>
               <div className="text-sm font-semibold text-gray-900">Production</div>
-              <div className="text-xs text-gray-600 mt-1">Start stage</div>
+              <div className="text-xs text-gray-600 mt-0.5">Start stage</div>
             </button>
-            <button className="group p-6 bg-gradient-to-br from-orange-50 to-orange-100 hover:from-orange-100 hover:to-orange-200 rounded-2xl transition-all">
-              <div className="text-3xl mb-3">📋</div>
+            <button className="group p-4 bg-gradient-to-br from-orange-50 to-orange-100 hover:from-orange-100 hover:to-orange-200 rounded-xl transition-all">
+              <div className="text-2xl mb-2">📋</div>
               <div className="text-sm font-semibold text-gray-900">Inventory</div>
-              <div className="text-xs text-gray-600 mt-1">Add materials</div>
+              <div className="text-xs text-gray-600 mt-0.5">Add materials</div>
             </button>
-            <button className="group p-6 bg-gradient-to-br from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 rounded-2xl transition-all">
-              <div className="text-3xl mb-3">✓</div>
+            <button className="group p-4 bg-gradient-to-br from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 rounded-xl transition-all">
+              <div className="text-2xl mb-2">✓</div>
               <div className="text-sm font-semibold text-gray-900">Quality</div>
-              <div className="text-xs text-gray-600 mt-1">Inspection</div>
+              <div className="text-xs text-gray-600 mt-0.5">Inspection</div>
             </button>
           </div>
         </div>
 
-        {/* Apple-style alerts */}
+        {/* Apple-style compact alerts */}
         {(stats?.materials?.low_stock > 0 || stats?.tasks?.pending > 0 || stats?.orders?.active > 0) && (
-          <div className="bg-white rounded-3xl p-8 shadow-sm">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">System Status</h2>
-            <div className="space-y-4">
+          <div className="bg-white rounded-2xl p-5 shadow-sm">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">System Status</h2>
+            <div className="space-y-3">
               {stats?.materials?.low_stock > 0 && (
                 <div className="flex items-center gap-4 p-5 bg-red-50 rounded-2xl">
                   <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
