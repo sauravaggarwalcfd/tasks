@@ -420,10 +420,120 @@ const TaskCreateForm = ({ workers, onSubmit, onCancel, currentUser, isSubmitting
           )}
         </div>
 
+        {/* Notification Settings */}
+        <div className="mb-6 border-t pt-6">
+          <h3 className="font-semibold text-gray-700 mb-3 flex items-center">
+            <span className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center text-xs mr-2">4</span>
+            Notifications & Communication
+          </h3>
+          
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-2xl">💬</span>
+              <h4 className="font-medium text-gray-800">Interactive Task Notifications</h4>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">
+              Recipients will receive notifications with action buttons to view task details, mark as complete, and fill completion information directly from the notification.
+            </p>
+            
+            <div className="flex items-center gap-4 mb-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.send_notifications}
+                  onChange={(e) => setFormData({ ...formData, send_notifications: e.target.checked })}
+                  className="w-4 h-4"
+                />
+                <span className="text-sm font-medium text-gray-700">Send Notifications</span>
+              </label>
+              <span className="text-xs text-gray-500">(Assigned person is notified automatically)</span>
+            </div>
+          </div>
+
+          {formData.send_notifications && (
+            <div className="space-y-4">
+              {/* Additional Individual Recipients */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  📱 Additional Individual Notifications
+                </label>
+                <p className="text-xs text-gray-500 mb-2">
+                  Select additional workers to notify about this task (assigned person is auto-notified)
+                </p>
+                <div className="max-h-40 overflow-y-auto border border-gray-200 rounded-lg p-3">
+                  {workers.filter(w => w.id !== formData.assigned_to).map(worker => (
+                    <label key={worker.id} className="flex items-center gap-2 py-1 cursor-pointer hover:bg-gray-50 px-2 rounded">
+                      <input
+                        type="checkbox"
+                        checked={formData.notify_users.includes(worker.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setFormData({ ...formData, notify_users: [...formData.notify_users, worker.id] });
+                          } else {
+                            setFormData({ ...formData, notify_users: formData.notify_users.filter(id => id !== worker.id) });
+                          }
+                        }}
+                        className="w-3 h-3"
+                      />
+                      <span className="text-sm text-gray-700">{worker.name}</span>
+                      <span className="text-xs text-gray-500">({worker.department})</span>
+                    </label>
+                  ))}
+                  {workers.filter(w => w.id !== formData.assigned_to).length === 0 && (
+                    <p className="text-xs text-gray-400 text-center py-2">No other workers available</p>
+                  )}
+                </div>
+                {formData.notify_users.length > 0 && (
+                  <p className="text-xs text-green-600 mt-2">
+                    ✓ {formData.notify_users.length} additional worker(s) will be notified
+                  </p>
+                )}
+              </div>
+
+              {/* Group Notifications */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  👥 Group Notifications
+                </label>
+                <p className="text-xs text-gray-500 mb-2">
+                  Select department groups to notify (useful for team coordination)
+                </p>
+                <div className="space-y-2">
+                  {departments.map(dept => (
+                    <label key={dept} className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
+                      <input
+                        type="checkbox"
+                        checked={formData.notify_groups.includes(dept)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setFormData({ ...formData, notify_groups: [...formData.notify_groups, dept] });
+                          } else {
+                            setFormData({ ...formData, notify_groups: formData.notify_groups.filter(g => g !== dept) });
+                          }
+                        }}
+                        className="w-4 h-4"
+                      />
+                      <span className="text-sm font-medium text-gray-700 capitalize">{dept} Department</span>
+                      <span className="text-xs text-gray-500">
+                        (All {dept} workers will be notified)
+                      </span>
+                    </label>
+                  ))}
+                </div>
+                {formData.notify_groups.length > 0 && (
+                  <p className="text-xs text-green-600 mt-2">
+                    ✓ {formData.notify_groups.length} department group(s) will be notified
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Tags */}
         <div className="mb-6 border-t pt-6">
           <h3 className="font-semibold text-gray-700 mb-3 flex items-center">
-            <span className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center text-xs mr-2">4</span>
+            <span className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center text-xs mr-2">5</span>
             Tags & Labels
           </h3>
           <div className="flex gap-2 mb-2">
