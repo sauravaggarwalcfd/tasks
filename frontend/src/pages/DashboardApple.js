@@ -45,54 +45,54 @@ const DashboardApple = () => {
       <div className="max-w-7xl mx-auto px-8 py-6">
         {/* Apple-style compact cards */}
         <div className="grid grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-all">
-            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-              <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all">
+            <div className="w-11 h-11 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4 shadow-lg">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
               </svg>
             </div>
-            <p className="text-sm font-medium text-gray-600 mb-2">Orders</p>
-            <p className="text-5xl font-semibold text-gray-900 mb-4" style={{letterSpacing: '-0.02em'}}>{stats?.orders?.total || 0}</p>
-            <div className="flex items-center gap-3 text-xs">
-              <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full font-medium">{stats?.orders?.completed || 0} done</span>
-              <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full font-medium">{stats?.orders?.active || 0} active</span>
+            <p className="text-xs font-medium text-gray-600 mb-1">Orders</p>
+            <p className="text-3xl font-semibold text-gray-900 mb-2" style={{letterSpacing: '-0.02em'}}>{stats?.orders?.total || 0}</p>
+            <div className="flex items-center gap-2 text-xs">
+              <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-medium">{stats?.orders?.completed || 0} done</span>
+              <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full font-medium">{stats?.orders?.active || 0} active</span>
             </div>
           </div>
 
-          <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-all">
-            <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-              <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all">
+            <div className="w-11 h-11 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mb-4 shadow-lg">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
             </div>
-            <p className="text-sm font-medium text-gray-600 mb-2">Team</p>
-            <p className="text-5xl font-semibold text-gray-900 mb-4" style={{letterSpacing: '-0.02em'}}>{stats?.workers?.total || 0}</p>
+            <p className="text-xs font-medium text-gray-600 mb-1">Team</p>
+            <p className="text-3xl font-semibold text-gray-900 mb-2" style={{letterSpacing: '-0.02em'}}>{stats?.workers?.total || 0}</p>
             <p className="text-xs text-gray-500">Active employees</p>
           </div>
 
-          <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-all">
-            <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-              <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all">
+            <div className="w-11 h-11 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mb-4 shadow-lg">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
               </svg>
             </div>
-            <p className="text-sm font-medium text-gray-600 mb-2">Materials</p>
-            <p className="text-5xl font-semibold text-gray-900 mb-4" style={{letterSpacing: '-0.02em'}}>{stats?.materials?.total || 0}</p>
+            <p className="text-xs font-medium text-gray-600 mb-1">Materials</p>
+            <p className="text-3xl font-semibold text-gray-900 mb-2" style={{letterSpacing: '-0.02em'}}>{stats?.materials?.total || 0}</p>
             {stats?.materials?.low_stock > 0 ? (
-              <span className="px-2 py-1 bg-red-100 text-red-700 rounded-full font-medium text-xs">{stats.materials.low_stock} low stock</span>
+              <span className="px-2 py-0.5 bg-red-100 text-red-700 rounded-full font-medium text-xs">{stats.materials.low_stock} low stock</span>
             ) : (
-              <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full font-medium text-xs">All stocked</span>
+              <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-medium text-xs">All stocked</span>
             )}
           </div>
 
-          <div className="bg-white rounded-3xl p-8 shadow-sm hover:shadow-lg transition-all">
-            <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-              <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all">
+            <div className="w-11 h-11 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-4 shadow-lg">
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <p className="text-sm font-medium text-gray-600 mb-2">Quality</p>
-            <p className="text-5xl font-semibold text-gray-900 mb-4" style={{letterSpacing: '-0.02em'}}>{stats?.quality?.pass_rate || 0}%</p>
+            <p className="text-xs font-medium text-gray-600 mb-1">Quality</p>
+            <p className="text-3xl font-semibold text-gray-900 mb-2" style={{letterSpacing: '-0.02em'}}>{stats?.quality?.pass_rate || 0}%</p>
             <p className="text-xs text-gray-500">{stats?.quality?.total_checks || 0} checks</p>
           </div>
         </div>
