@@ -220,8 +220,98 @@ class Task(BaseModel):
     priority: TaskPriority
     status: TaskStatus = TaskStatus.PENDING
     due_date: Optional[str] = None
+    tags: List[str] = []
+    estimated_hours: Optional[float] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     completed_at: Optional[datetime] = None
+    created_by: Optional[str] = None
+
+
+# Task Comment Models
+class TaskCommentCreate(BaseModel):
+    task_id: str
+    user_id: str
+    user_name: str
+    comment: str
+
+class TaskComment(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    task_id: str
+    user_id: str
+    user_name: str
+    comment: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+# Subtask Models
+class SubtaskCreate(BaseModel):
+    task_id: str
+    title: str
+
+class Subtask(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    task_id: str
+    title: str
+    completed: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    completed_at: Optional[datetime] = None
+
+
+# Attachment Models
+class TaskAttachmentCreate(BaseModel):
+    task_id: str
+    file_name: str
+    file_url: str
+    file_type: str
+    uploaded_by: str
+
+class TaskAttachment(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    task_id: str
+    file_name: str
+    file_url: str
+    file_type: str
+    uploaded_by: str
+    uploaded_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+# Time Log Models
+class TimeLogCreate(BaseModel):
+    task_id: str
+    user_id: str
+    user_name: str
+    hours: float
+    description: Optional[str] = ""
+
+class TimeLog(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    task_id: str
+    user_id: str
+    user_name: str
+    hours: float
+    description: Optional[str] = ""
+    logged_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+# Activity Log Model
+class ActivityLog(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    task_id: str
+    user_id: str
+    user_name: str
+    action: str  # "created", "commented", "status_changed", "assigned", etc.
+    details: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # ==================== HELPER FUNCTIONS ====================
