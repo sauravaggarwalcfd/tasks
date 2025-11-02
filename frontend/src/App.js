@@ -1,38 +1,82 @@
-import { useEffect } from "react";
-import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import React from 'react';
+import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
+import '@/App.css';
+import Dashboard from './pages/Dashboard';
+import Orders from './pages/Orders';
+import Production from './pages/Production';
+import Inventory from './pages/Inventory';
+import Quality from './pages/Quality';
+import Employees from './pages/Employees';
+import Analytics from './pages/Analytics';
+import Tasks from './pages/Tasks';
+import Suppliers from './pages/Suppliers';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
-
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
+const Layout = ({ children }) => {
+  const location = useLocation();
+  
+  const isActive = (path) => {
+    return location.pathname === path ? 'bg-blue-700' : '';
   };
 
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
-
   return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
+    <div className="flex h-screen bg-gray-100">
+      {/* Sidebar */}
+      <div className="w-64 bg-blue-900 text-white flex flex-col">
+        <div className="p-6 border-b border-blue-800">
+          <h1 className="text-2xl font-bold">Factory Manager</h1>
+          <p className="text-blue-300 text-sm mt-1">Fashion Apparel System</p>
+        </div>
+        
+        <nav className="flex-1 overflow-y-auto py-4">
+          <Link to="/" className={`flex items-center px-6 py-3 hover:bg-blue-800 transition ${isActive('/')}`}>
+            <span className="mr-3">📊</span>
+            <span>Dashboard</span>
+          </Link>
+          <Link to="/orders" className={`flex items-center px-6 py-3 hover:bg-blue-800 transition ${isActive('/orders')}`}>
+            <span className="mr-3">📦</span>
+            <span>Orders</span>
+          </Link>
+          <Link to="/production" className={`flex items-center px-6 py-3 hover:bg-blue-800 transition ${isActive('/production')}`}>
+            <span className="mr-3">⚙️</span>
+            <span>Production</span>
+          </Link>
+          <Link to="/inventory" className={`flex items-center px-6 py-3 hover:bg-blue-800 transition ${isActive('/inventory')}`}>
+            <span className="mr-3">📋</span>
+            <span>Inventory</span>
+          </Link>
+          <Link to="/suppliers" className={`flex items-center px-6 py-3 hover:bg-blue-800 transition ${isActive('/suppliers')}`}>
+            <span className="mr-3">🏭</span>
+            <span>Suppliers</span>
+          </Link>
+          <Link to="/quality" className={`flex items-center px-6 py-3 hover:bg-blue-800 transition ${isActive('/quality')}`}>
+            <span className="mr-3">✅</span>
+            <span>Quality Control</span>
+          </Link>
+          <Link to="/employees" className={`flex items-center px-6 py-3 hover:bg-blue-800 transition ${isActive('/employees')}`}>
+            <span className="mr-3">👥</span>
+            <span>Employees</span>
+          </Link>
+          <Link to="/tasks" className={`flex items-center px-6 py-3 hover:bg-blue-800 transition ${isActive('/tasks')}`}>
+            <span className="mr-3">📝</span>
+            <span>Tasks</span>
+          </Link>
+          <Link to="/analytics" className={`flex items-center px-6 py-3 hover:bg-blue-800 transition ${isActive('/analytics')}`}>
+            <span className="mr-3">📈</span>
+            <span>Analytics</span>
+          </Link>
+        </nav>
+        
+        <div className="p-4 border-t border-blue-800 text-sm text-blue-300">
+          <p>© 2025 Factory Manager</p>
+        </div>
+      </div>
+      
+      {/* Main Content */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-8">
+          {children}
+        </div>
+      </div>
     </div>
   );
 };
@@ -41,11 +85,19 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/production" element={<Production />} />
+            <Route path="/inventory" element={<Inventory />} />
+            <Route path="/suppliers" element={<Suppliers />} />
+            <Route path="/quality" element={<Quality />} />
+            <Route path="/employees" element={<Employees />} />
+            <Route path="/tasks" element={<Tasks />} />
+            <Route path="/analytics" element={<Analytics />} />
+          </Routes>
+        </Layout>
       </BrowserRouter>
     </div>
   );
