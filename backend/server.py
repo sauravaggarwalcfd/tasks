@@ -599,6 +599,11 @@ async def create_task(task_input: TaskCreate):
     task_data = task_input.model_dump()
     initial_attachments = task_data.pop('initial_attachments', [])
     
+    # Validate attachment sizes
+    for att in initial_attachments:
+        if att.get('file_url', '').startswith('data:') and len(att.get('file_url', '')) > 1000000:  # 1MB limit for data URLs
+            raise HTTPException(status_code=413, detail=f"Attachment '{att.get('file_name', 'unknown')}' is too large. Please use smaller files.")
+    
     task = Task(**task_data)
     doc = task.model_dump()
     doc = serialize_doc(doc)
@@ -607,16 +612,20 @@ async def create_task(task_input: TaskCreate):
     # Add initial attachments if provided
     if initial_attachments:
         for att in initial_attachments:
-            attachment = TaskAttachment(
-                task_id=task.id,
-                file_name=att.get('file_name', 'Untitled'),
-                file_url=att.get('file_url', ''),
-                file_type=att.get('file_type', 'link'),
-                uploaded_by=att.get('uploaded_by', 'System')
-            )
-            att_doc = attachment.model_dump()
-            att_doc = serialize_doc(att_doc)
-            await db.task_attachments.insert_one(att_doc)
+            try:
+                attachment = TaskAttachment(
+                    task_id=task.id,
+                    file_name=att.get('file_name', 'Untitled'),
+                    file_url=att.get('file_url', ''),
+                    file_type=att.get('file_type', 'link'),
+                    uploaded_by=att.get('uploaded_by', 'System')
+                )
+                att_doc = attachment.model_dump()
+                att_doc = serialize_doc(att_doc)
+                await db.task_attachments.insert_one(att_doc)
+            except Exception as e:
+                logging.warning(f"Failed to save attachment {att.get('file_name', 'unknown')}: {str(e)}")
+                # Continue with task creation even if attachment fails
     
     # Log activity
     await log_activity(task.id, task.created_by or 'system', task.created_by or 'System', 'created', f'Created task: {task.title}')
