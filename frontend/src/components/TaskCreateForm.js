@@ -56,27 +56,50 @@ const TaskCreateForm = ({ workers, onSubmit, onCancel, currentUser, isSubmitting
     const files = Array.from(event.target.files);
     
     files.forEach(file => {
-      // Validate file size (max 10MB)
-      if (file.size > 10 * 1024 * 1024) {
-        alert(`File ${file.name} is too large. Maximum size is 10MB.`);
+      // Validate file size (max 2MB for images, 10MB for others)
+      const maxSize = file.type.startsWith('image/') ? 2 * 1024 * 1024 : 10 * 1024 * 1024;
+      const maxSizeLabel = file.type.startsWith('image/') ? '2MB' : '10MB';
+      
+      if (file.size > maxSize) {
+        alert(`File "${file.name}" is too large. Maximum size for ${file.type.startsWith('image/') ? 'images' : 'files'} is ${maxSizeLabel}.`);
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const fileData = {
-          file_name: file.name,
-          file_url: e.target.result, // Base64 data URL
-          file_type: getFileTypeFromName(file.name),
-          uploaded_by: currentUser.name,
-          file_size: file.size,
-          original_file: true
-        };
+      console.log(`Processing file: ${file.name} (${file.size} bytes, ${file.type})`);
 
-        setFormData(prev => ({
-          ...prev,
-          initial_attachments: [...prev.initial_attachments, fileData]
-        }));
+      const reader = new FileReader();
+      reader.onerror = () => {
+        console.error('Error reading file:', file.name);
+        alert(`Error reading file "${file.name}". Please try again.`);
+      };
+      
+      reader.onload = (e) => {
+        try {
+          const fileData = {
+            file_name: file.name,
+            file_url: e.target.result, // Base64 data URL
+            file_type: getFileTypeFromName(file.name),
+            uploaded_by: currentUser.name,
+            file_size: file.size,
+            original_file: true
+          };
+
+          // For images, validate the data URL isn't too large
+          if (file.type.startsWith('image/') && e.target.result.length > 500000) { // ~500KB as Base64
+            alert(`Image "${file.name}" is too large when encoded. Please use a smaller image or compress it.`);
+            return;
+          }
+
+          console.log(`File processed successfully: ${file.name}`);
+          setFormData(prev => ({
+            ...prev,
+            initial_attachments: [...prev.initial_attachments, fileData]
+          }));
+          
+        } catch (error) {
+          console.error('Error processing file:', error);
+          alert(`Error processing file "${file.name}". Please try again.`);
+        }
       };
       
       reader.readAsDataURL(file);
