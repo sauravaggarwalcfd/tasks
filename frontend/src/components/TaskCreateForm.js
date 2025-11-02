@@ -112,20 +112,6 @@ const TaskCreateForm = ({ workers, onSubmit, onCancel, currentUser }) => {
     return 'document';
   };
 
-  const handleFilesUploaded = (newFiles) => {
-    setFormData(prev => ({
-      ...prev,
-      initial_attachments: [...prev.initial_attachments, ...newFiles]
-    }));
-  };
-
-  const handleRemoveAttachment = (index) => {
-    setFormData({
-      ...formData,
-      initial_attachments: formData.initial_attachments.filter((_, idx) => idx !== index)
-    });
-  };
-
   const getFileIcon = (fileType) => {
     const icons = {
       image: '🖼️',
