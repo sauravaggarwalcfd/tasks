@@ -599,10 +599,11 @@ async def create_task(task_input: TaskCreate):
     task_data = task_input.model_dump()
     initial_attachments = task_data.pop('initial_attachments', [])
     
-    # Validate attachment sizes
+    # Validate attachment sizes (increased to 3MB for Base64 encoded data)
     for att in initial_attachments:
-        if att.get('file_url', '').startswith('data:') and len(att.get('file_url', '')) > 1000000:  # 1MB limit for data URLs
-            raise HTTPException(status_code=413, detail=f"Attachment '{att.get('file_name', 'unknown')}' is too large. Please use smaller files.")
+        if att.get('file_url', '').startswith('data:') and len(att.get('file_url', '')) > 3000000:  # 3MB limit for data URLs
+            raise HTTPException(status_code=413, detail=f"Attachment '{att.get('file_name', 'unknown')}' is too large. Maximum size is 6MB.")
+    
     
     task = Task(**task_data)
     doc = task.model_dump()
