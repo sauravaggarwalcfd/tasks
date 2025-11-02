@@ -17,6 +17,9 @@ import Employees from './pages/Employees';
 import Analytics from './pages/Analytics';
 import Tasks from './pages/Tasks';
 import TasksEnhanced from './pages/TasksEnhanced';
+import Messages from './pages/Messages';
+import Groups from './pages/Groups';
+import Notifications from './pages/Notifications';
 import Suppliers from './pages/Suppliers';
 
 const Layout = ({ children }) => {
