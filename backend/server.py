@@ -63,6 +63,19 @@ class TaskPriority(str, Enum):
     HIGH = "high"
     URGENT = "urgent"
 
+class MessageType(str, Enum):
+    TEXT = "text"
+    TASK_NOTIFICATION = "task_notification"
+    SYSTEM = "system"
+    FILE = "file"
+
+class NotificationType(str, Enum):
+    TASK_CREATED = "task_created"
+    TASK_REMINDER = "task_reminder" 
+    TASK_COMPLETED = "task_completed"
+    TASK_OVERDUE = "task_overdue"
+    TASK_UPDATED = "task_updated"
+
 
 # ==================== MODELS ====================
 
