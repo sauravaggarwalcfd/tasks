@@ -71,6 +71,18 @@ const Layout = ({ children }) => {
             <span className="mr-3">📝</span>
             <span>Tasks</span>
           </Link>
+          <Link to="/messages" className={`flex items-center px-6 py-3 hover:bg-blue-800 transition ${isActive('/messages')}`}>
+            <span className="mr-3">💬</span>
+            <span>Messages</span>
+          </Link>
+          <Link to="/groups" className={`flex items-center px-6 py-3 hover:bg-blue-800 transition ${isActive('/groups')}`}>
+            <span className="mr-3">👥</span>
+            <span>Groups</span>
+          </Link>
+          <Link to="/notifications" className={`flex items-center px-6 py-3 hover:bg-blue-800 transition ${isActive('/notifications')}`}>
+            <span className="mr-3">🔔</span>
+            <span>Notifications</span>
+          </Link>
           <Link to="/analytics" className={`flex items-center px-6 py-3 hover:bg-blue-800 transition ${isActive('/analytics')}`}>
             <span className="mr-3">📈</span>
             <span>Analytics</span>
