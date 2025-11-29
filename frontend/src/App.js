@@ -111,7 +111,8 @@ function App() {
       <BrowserRouter>
         <Layout>
           <Routes>
-            <Route path="/" element={<DashboardApple />} />
+            <Route path="/" element={<GarmentForge />} />
+            <Route path="/dashboard" element={<DashboardApple />} />
             <Route path="/modern" element={<DashboardModern />} />
             <Route path="/minimal" element={<DashboardMinimal />} />
             <Route path="/dark" element={<DashboardDark />} />
